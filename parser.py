@@ -6,7 +6,7 @@ import csv
 import openpyxl
 
 
-def parse_file(file_path):
+def parse_file(file_path, percentage=10):
     """
     Parses the given file and returns the extracted data.
     """
@@ -14,33 +14,33 @@ def parse_file(file_path):
 
     try:
         if file_ext == ".csv":
-            return parse_csv(file_path)
+            return parse_csv(file_path, percentage )
         elif file_ext in [".xlsx", ".xls"]:
-            return parse_excel(file_path)
+            return parse_excel(file_path, percentage)
         elif file_ext == ".txt":
-            return parse_txt(file_path)
+            return parse_txt(file_path, percentage)
         elif file_ext == ".xml":
-            return parse_xml(file_path)
+            return parse_xml(file_path, percentage)
         elif file_ext == ".docx":
-            return parse_docx(file_path)
+            return parse_docx(file_path, percentage)
         else:
             return ["Unsupported file type"]
     except Exception as e:
         return [f"Error parsing file: {e}"]
 
 
-def parse_csv(file_path):
+def parse_csv(file_path, percentage=10):
     try:
         with open(file_path, 'r', newline='', encoding='utf-8') as csvfile:
             reader = csv.DictReader(csvfile)
             rows = list(reader)
-        sample_size = max(1, int(0.1 * len(rows)))
+        sample_size = max(1, int((percentage / 100) * len(rows)))
         return random.sample(rows, sample_size)
     except Exception as e:
         return [f"Error parsing CSV: {e}"]
 
 
-def parse_excel(file_path):
+def parse_excel(file_path, percentage=10):
     try:
         workbook = openpyxl.load_workbook(file_path)
         sheet = workbook.active
@@ -56,13 +56,13 @@ def parse_excel(file_path):
                 row_data[key] = value
             rows.append(row_data)
 
-        sample_size = max(1, int(0.1 * len(rows)))
+        sample_size = max(1, int((percentage / 100) * len(rows)))
         return random.sample(rows, sample_size)
     except Exception as e:
         return [f"Error parsing Excel: {e}"]
 
 
-def parse_txt(file_path):
+def parse_txt(file_path, percentage=10):
     try:
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
@@ -71,31 +71,31 @@ def parse_txt(file_path):
             with open(file_path, 'r', encoding='latin-1') as f:
                 lines = f.readlines()
 
-        sample_size = max(1, int(0.1 * len(lines)))
+        sample_size = max(1, int((percentage / 100) * len(lines)))
         sample_lines = random.sample(lines, sample_size)
         return [{"Line": line.strip()} for line in sample_lines]
     except Exception as e:
         return [f"Error parsing TXT: {e}"]
 
 
-def parse_xml(file_path):
+def parse_xml(file_path, percentage=10):
     try:
         tree = etree.parse(file_path)
         root = tree.getroot()
         text_list = [element.text for element in root.iter() if element.text]
         lines = "\n".join(text_list).splitlines()
 
-        sample_size = max(1, int(0.1 * len(lines)))
+        sample_size = max(1, int((percentage / 100) * len(lines)))
         return random.sample(lines, sample_size)
     except Exception as e:
         return [f"Error parsing XML: {e}"]
 
 
-def parse_docx(file_path):
+def parse_docx(file_path, percentage=10):
     try:
         doc = docx.Document(file_path)
         lines = [para.text.strip() for para in doc.paragraphs if para.text.strip()]
-        sample_size = max(1, int(0.1 * len(lines)))
+        sample_size = max(1, int((percentage / 100) * len(lines)))
         return random.sample(lines, sample_size)
     except Exception as e:
         return [f"Error parsing DOCX: {e}"]

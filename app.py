@@ -3,7 +3,7 @@ import csv
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QFileDialog, QTableWidget,
     QTableWidgetItem, QPushButton, QVBoxLayout, QWidget,
-    QMessageBox, QLabel, QHBoxLayout
+    QMessageBox, QLabel, QHBoxLayout, QComboBox
 )
 from parser import parse_file
 from reportlab.lib.pagesizes import letter, landscape
@@ -27,6 +27,12 @@ class FileParserApp(QMainWindow):
 
         self.label = QLabel("Upload a file (CSV, Excel, TXT, XML, DOCX):")
         layout.addWidget(self.label)
+
+        layout.addWidget(QLabel("Select percentage of data:"))
+        self.percentage_dropdown = QComboBox()
+        self.percentage_dropdown.addItems([str(i) for i in range(10, 101, 10)])
+        self.percentage_dropdown.setCurrentText("10")  # default 10%
+        layout.addWidget(self.percentage_dropdown)
 
         self.mode_toggle_button = QPushButton("Toggle Dark Mode")
         self.mode_toggle_button.clicked.connect(self.toggle_theme)
@@ -157,7 +163,8 @@ class FileParserApp(QMainWindow):
             options=options,
         )
         if file_path:
-            self.parsed_data = parse_file(file_path)
+            percentage = int(self.percentage_dropdown.currentText())
+            self.parsed_data = parse_file(file_path, percentage)
             self.populate_table()
 
     def populate_table(self):
