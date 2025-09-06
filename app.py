@@ -15,7 +15,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 class FileParserApp(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Universal File Parser")
+        self.setWindowTitle("Inv10 Secure Sample")
         self.is_dark_mode = True
         self.setStyleSheet(self.load_light_stylesheet())
         self.setGeometry(100, 100, 800, 600)
